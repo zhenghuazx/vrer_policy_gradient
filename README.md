@@ -257,7 +257,7 @@ to agent constructor or alternatively using `--history-checkpoint <some-history.
   If the history checkpoint exists, training metrics will automatically start from where it left.
   
 ### *6.1. TRPO-VRER*
-Run TRPO with VRER with command line
+* *Action spaces:* discrete, continuous
 
 | flags                         | help                                                                         | default   | hp_type     |
 |:------------------------------|:-----------------------------------------------------------------------------|:----------|:------------|
@@ -308,7 +308,8 @@ Run TRPO with VRER with command line
 | --weights                     | Path(s) to model(s) weight(s) to be loaded by agent output_models            | -         | -           |
 
 
-** Example **
+**Run TRPO with VRER with command line**
+	
 	vrer-pg train trpovrer --n-env 4 --target-reward 195 --env CartPole-v0
    	
 ```sh
