@@ -237,10 +237,13 @@ to agent constructor or alternatively using `--history-checkpoint <some-history.
   If the history checkpoint exists, training metrics will automatically start from where it left.
   
 ### *6.1. TRPO-VRER*
-
+Run TRPO with VRER with command line
 **Command line**
+	
 	vrer-pg train trpovrer
+	
 **Out**
+	
 	vrer-pg 1.0.1
 
 	Usage:
