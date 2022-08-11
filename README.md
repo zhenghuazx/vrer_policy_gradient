@@ -2,6 +2,9 @@ VRER: A Sample-Efficient Variance Reduction based Experience Replay Method for P
 ===========
 
 [![zheng](https://img.shields.io/badge/Author-Zheng.H-yellow)](https://zhenghuazx.github.io/hua.zheng/)
+[![GitHub issues](https://img.shields.io/github/issues/zhenghuazx/vrer_policy_gradient)](https://github.com/zhenghuazx/vrer_policy_gradient/issues)
+[![GitHub license](https://img.shields.io/github/license/zhenghuazx/vrer_policy_gradient)](https://github.com/zhenghuazx/vrer_policy_gradient/blob/main/LICENSE)
+[![GitHub stars](https://img.shields.io/github/stars/zhenghuazx/vrer_policy_gradient)](https://github.com/zhenghuazx/vrer_policy_gradient/stargazers)
 
 
 **vrer-pg**, short for variance reduction based policy gradient, is a library of variance reduction based experience replay method proposed in the paper "Zheng, H., et al., 2022. Variance Reduction based Experience Replay for Reinforcement Learning Policy Optimization."
@@ -9,6 +12,28 @@ VRER: A Sample-Efficient Variance Reduction based Experience Replay Method for P
 The research was conducted by Hua Zheng and supervised by Professor Wei Xie, Professor Ben Feng. We would appreciate a citation if you use the code or results! 
 
 **Acknowledge**: This library is built on top of rlalgorithms-tf2 which no longer exists on Github. But I would like to acknowledge its author **unsignedrant**.
+
+* [Introduction](#1-introduction)
+  * [Description](#11-description)
+  * [Installation](#12-installation)
+  * [Results](#13-results)
+  * [Reproduction](#-14-reproduction)
+* [Features](#2-features)
+  * [Command line options](#21-command-line-options)
+  * [Intuitive hyperparameter tuning from cli](#22-intuitive-hyperparameter-tuning-from-cli)
+  * [Early stopping / reduce on plateau](#23-early-stopping--reduce-on-plateau)
+  * [Models are loaded from .cfg files](#24-models-are-loaded-from-cfg-files)
+  * [Training history checkpoints](#25-training-history-checkpoints)
+  * [Reproducible results](#26-reproducible-results)
+  * [Gameplay output to .jpg frames or .mp4 vid](#27-gameplay-output-to-jpg-frames)
+  * [Resumable training and history](#28-resume-training--history)
+* [Usage](#3-usage)
+* [Algorithms](#4-algorithms)
+  * [TRPO and TRPO-VRER](#41-trpo-vrer)
+  * [PPO and PPO-VRER](#42-ppovrer-and-ppo)
+* [Contact](#5-contact)
+* [Cite Us](#6-cite-us)
+
 
 <!-- INTRODUCTION -->
 ## **1. Introduction**
@@ -18,11 +43,17 @@ ___
 Experience replay allows agents to remember and reuse historical transitions. However, the uniform reuse strategy regardless of their
 significance is implicitly biased toward out-of-date observations. To overcome this limitation, we propose a general variance reduction based experience reply (VRER) approach, which allows policy optimization algorithms to selectively reuse the most relevant samples and improve policy gradient estimation. It tends to put more weight on historical observations that are more likely sampled from the target distribution. Different from other ER methods VRER is a theoretically justified and simple-to-use approach. Our theoretical and empirical studies demonstrate that the proposed VRER can accelerate the learning of optimal policy and enhance the performance of state-of-the-art policy optimization approaches.
 
-### **1. Installation**
+### **1.1. Description**
 ___
+**vrer-pg** is a tensorflow based AI library which facilitates experimentation with
+existing reinforcement learning algorithms with variance reduction based policy optimization. 
+The current implementation is based on **rlalgorithms-tf2** library (which unforunately is discontiued in Github).
+It provides well tested components that can be easily modified or extended. The available
+selection of algorithms can be used directly or through command line.
 
-![installation](/assets/installation.gif)
-    
+### **1.2. Installation**
+___
+ 
     pip install git+https://github.com/zhenghuazx/vrer_policy_gradient.git
 
 *Verify installation**
@@ -47,38 +78,32 @@ vrer-pg
 	Use vrer-pg <command> <agent> to see more info about command + agent
 	
 
-### **2. Improvement on State-of-the-art PO algorithms**
+### **1.3. Results**
 ___
 
-The mean performance curves and 95% confidence intervals of PPO(-VRER), TRPO(-VRER) and VPG(-VRER).
+The performance improvement of state-of-the-art PO algorithms after using VRER.
+Results are described by the mean performance curves and 95% confidence intervals of PPO(-VRER), TRPO(-VRER) and VPG(-VRER).
 
 ![convergence-PPO](assets/convergenec-PPO.png)
 ![convergence-TRPO](assets/convergenec-TRPO.png)
 ![convergence-VPG](assets/convergenec-VPG.png)
 
-### **2. Reproduction**
-=======
-We
+### **1.4. Reproduction**
 
-<!-- DESCRIPTION -->
-## **2. Description**
-___
-**vrer-pg** is a tensorflow based AI library which facilitates experimentation with
-existing reinforcement learning algorithms with variance reduction based policy optimization. 
-The current implementation is based on **rlalgorithms-tf2** library (which unforunately is discontiued in Github).
-It provides well tested components that can be easily modified or extended. The available
-selection of algorithms can be used directly or through command line.
+All results of PPO(-VRER) and TRPO(-VRER) can be reproduced by scripts in ``reproduction`` and results of VPG(-VRER) 
+can be reproduced by scripts in ``vrer_policy_gradient/vpgvrer-script`` and ``vrer_policy_gradient/vpg-script``.
+
 
 <!-- FEATURES -->
-## **3. Features**
+## **2. Features**
 ___
 
-### **3.1. Command line options**
+### **2.1. Command line options**
 
 All features are available through the command line. For more command line info,
 check [command line options](#5-command-line-options)
 
-### **3.2. Intuitive hyperparameter tuning from cli**
+### **2.2. Intuitive hyperparameter tuning from cli**
 
 Command line tuning interface based on [optuna](https://optuna.org), which provides 
 many hyperparameter features and types. 3 types are currently used by rlalgorithms-tf2:
@@ -94,7 +119,7 @@ many hyperparameter features and types. 3 types are currently used by rlalgorith
 And in both examples if `--interesting-param` is not specified, it will have the default value, 
 or a fixed value, if only 1 value is specified. 
 
-### **3.3. Early stopping / reduce on plateau.**
+### **2.3. Early stopping / reduce on plateau.**
 
 Early train stopping usually when plateau is reached for a pre-specified
 n number of times without any improvement. Learning rate is
@@ -102,7 +127,7 @@ reduced by some pre-determined factor. To activate these features:
 
     --divergence-monitoring-steps <train-steps-at-which-should-monitor>
     
-### **3.4. Models are loaded from .cfg files**
+### **2.4. Models are loaded from .cfg files**
 
 To facilitate experimentation, and eliminate redundancy, all agents support
 loading models by passing either `--model <model.cfg>` or `--actor-model <actor.cfg>` and 
@@ -186,7 +211,7 @@ Which should generate a keras model similar to this one with output units 6, and
 * `common=1` marks a layer to be reused by the following layers, which means
 `dense-1` and `dense-2` are called on the output of `dense-0`.
 
-### **3.5. Training history checkpoints**
+### **2.5. Training history checkpoints**
 
 Saving training history is available for further benchmarking / visualizing results.
 This is achieved by specifying `--history-checkpoint <history.parquet>` which will result
@@ -199,16 +224,16 @@ columns:
 * `step` most recent agent step.
 * `time` training elapsed time.
 
-### **3.6. Reproducible results**
+### **2.6. Reproducible results**
 
 All operation results are reproducible by passing `--seed <some-seed>` or `seed=some_seed` 
 to agent constructor.
 
-### **3.7. Gameplay output to .jpg frames**
+### **2.7. Gameplay output to .jpg frames**
 
 Gameplay visual output can be saved to `.jpg` frames by passing `--frame-dir <some-dir>` to `play` command.
 
-### **3.8. Resume training / history**
+### **2.8. Resume training / history**
 
 Weights are saved to `.tf` by specifying `--checkpoints <ckpt1.tf> <ckpt2.tf>`. To resume training,
 `--weights <ckpt1.tf> <ckpt2.tf>` should load the weights saved earlier. If `--history-checkpoint <ckpt.parquet>`
@@ -217,7 +242,7 @@ to the same history `ckpt.parquet` and the agent metrics will be updated with th
 recent ones contained in the history file.
 
 <!-- USAGE -->
-## **4. Usage**
+## **3. Usage**
 ___
 All agents / commands are available through the command line.
 
@@ -247,7 +272,7 @@ vrer-pg train trpovrer
 	Use vrer-pg <command> <agent> to see more info about command + agent
 	
 <!-- ALGORITHMS -->
-## **5. Algorithms**
+## **4. Algorithms**
 ___
 **General notes**
 
@@ -270,7 +295,7 @@ specified from code. If from the command line, all you need is to pass `--seed <
 to agent constructor or alternatively using `--history-checkpoint <some-history.parquet>`. 
   If the history checkpoint exists, training metrics will automatically start from where it left.
   
-### *6.1. TRPO-VRER*
+### *4.1. TRPO-VRER*
 * *Number of models:* 1
 * *Action spaces:* discrete, continuous
 
@@ -371,7 +396,113 @@ Best reward updated: 50.69 -> 56.27
 time: 0:00:44.179972, steps: 28672, games: 833, speed: 988 steps/s, mean reward: 59.49, best reward: 56.27
 ```
 
-### *6.5. PPOVRER and PPO*
+#### **4.1.1 TRPO Non-command line**
+
+    ''' TRPO '''
+    from tensorflow.keras.optimizers import Adam
+    import os
+    import vrer_policy_gradient
+    from vrer_policy_gradient import TRPO
+    from vrer_policy_gradient.utils.common import ModelReader, create_envs
+    
+    for i in range(5):
+        seed = i + 2021
+        n_envs = 4
+        n_steps = 128
+        clip_norm = 0.2
+        entropy_coef = 0.0
+        mini_batches = 32
+        lr = 0.0003
+        max_steps = 400000
+        target_reward = -70
+        problem = 'Acrobot-v1'
+        checkpoints = ['trpo-actor-acrobot-v1-seed-{}.tf'.format(i), 'trpo-critic-acrobot-v1-seed-{}.tf'.format(i)]
+        history_checkpoint = 'trpo-acrobot-v1-seed-{}.parquet'.format(i)
+        path = "TRPO/{}/approx-2nd-seed-{}-id-{}/".format(problem, seed, i)
+        isExist = os.path.exists(path)
+        if not isExist:
+            # Create a new directory because it does not exist
+            os.makedirs(path)
+        checkpoints = [path + i for i in checkpoints]
+        history_checkpoint = path + history_checkpoint
+    
+        envs = create_envs(problem, n_envs, False)
+        actor_model_cfg = 'TRPO/models/ann-actor.cfg'  # rlalgorithms_tf2.agents['trpo']['actor_model']['ann'][0]
+        critic_model_cfg = 'TRPO/models/ann-critic.cfg'  # rlalgorithms_tf2.agents['trpo']['critic_model']['ann'][0]
+        optimizer = Adam(learning_rate=lr)
+        actor_model = ModelReader(
+            actor_model_cfg,
+            output_units=[envs[0].action_space.n],
+            input_shape=envs[0].observation_space.shape,
+            optimizer=optimizer,
+        ).build_model()
+        critic_model = ModelReader(
+            actor_model_cfg,
+            output_units=[1],
+            input_shape=envs[0].observation_space.shape,
+            optimizer=optimizer,
+        ).build_model()
+        agent = TRPO(envs, actor_model, critic_model, seed=seed, n_steps=n_steps, entropy_coef=entropy_coef, mini_batches=mini_batches,
+                     clip_norm=clip_norm, checkpoints=checkpoints, history_checkpoint=history_checkpoint, log_frequency=4)
+        agent.fit(target_reward=target_reward, max_steps=max_steps)
+
+
+#### **4.1.2 TRPO-VRER Non-command line**
+    
+    ''' TRPO-VRER '''
+    from tensorflow.keras.optimizers import Adam
+    import os
+    from vrer_policy_gradient import PPO, TRPOVRER
+    from vrer_policy_gradient.utils.common import ModelReader, create_envs
+    from vrer_policy_gradient.utils.buffers import ReplayBuffer1
+    import vrer_policy_gradient
+    
+    for i in range(5):
+        seed = i + 2021
+        n_envs = 4
+        n_steps = 128
+        clip_norm = 0.2
+        entropy_coef = 0.0
+        mini_batches = 32
+        lr = 0.0003
+        max_steps = 400000
+        target_reward = -70
+        buffer_size = 100
+        problem = 'Acrobot-v1'
+        checkpoints = ['trpovrer-actor-problem-{}-buffer_size-{}-seed-{}.tf'.format(problem, buffer_size, i),
+                       'trpovrer-critic-problem-{}-buffer_size-{}-seed-{}.tf'.format(problem, buffer_size, i)]
+        history_checkpoint = 'trpovrer-problem-{}-buffer_size-{}-seed-{}.parquet'.format(problem, buffer_size, i)
+        path = "trpovrer/{}/approx-2nd-buffer_size-{}-seed-{}-id-{}/".format(problem, buffer_size, seed, i)
+        isExist = os.path.exists(path)
+        if not isExist:
+            # Create a new directory because it does not exist
+            os.makedirs(path)
+        checkpoints = [path + i for i in checkpoints]
+        history_checkpoint = path + history_checkpoint
+    
+        envs = create_envs(problem, n_envs, False)
+    
+        actor_model_cfg = vrer_policy_gradient.agents['trpovrer']['actor_model']['ann'][0]
+        critic_model_cfg = vrer_policy_gradient.agents['trpovrer']['critic_model']['ann'][0]
+        optimizer = Adam(learning_rate=lr)
+        actor_model = ModelReader(
+            actor_model_cfg,
+            output_units=[envs[0].action_space.n],
+            input_shape=envs[0].observation_space.shape,
+            optimizer=optimizer,
+        ).build_model()
+        critic_model = ModelReader(
+            actor_model_cfg,
+            output_units=[1],
+            input_shape=envs[0].observation_space.shape,
+            optimizer=optimizer,
+        ).build_model()
+    
+        agent = TRPOVRER(envs, actor_model, critic_model, seed=seed, n_steps=n_steps, entropy_coef=entropy_coef, mini_batches=mini_batches,
+                     clip_norm=clip_norm, checkpoints=checkpoints, history_checkpoint=history_checkpoint, log_frequency=4, buffer_size=buffer_size)
+        agent.fit(target_reward=target_reward, max_steps=max_steps)
+
+### *4.2. PPOVRER and PPO*
 
 * *Number of models:* 1
 * *Action spaces:* discrete, continuous
@@ -426,22 +557,103 @@ or
 
     rlalgorithms-tf2 train ppo --env BipedalWalker-v3 --target-reward 200 --n-envs 16 --checkpoints ppo-bipedal-walker.tf
 
-**Non-command line**
-
-    from tensorflow.keras.optimizers import Adam
+#### **4.2.1 PPO Non-command line**
     
-    import vrer_p
+    ''' PPO '''
+    from tensorflow.keras.optimizers import Adam
+    import os
     from vrer_policy_gradient import PPO
     from vrer_policy_gradient.utils.common import ModelReader, create_envs
     
-    envs = create_envs('PongNoFrameskip-v4', 16)
-    model_cfg = vrer_policy_gradient.agents['ppo']['model']['cnn'][0]
-    optimizer = Adam(learning_rate=7e-4)
-    model = ModelReader(
-        model_cfg,
-        output_units=[envs[0].action_space.n, 1],
-        input_shape=envs[0].observation_space.shape,
-        optimizer=optimizer,
-    ).build_model()
-    agent = PPO(envs, model, checkpoints=['ppo-pong.tf'])
-    agent.fit(target_reward=19)
+    for i in range(5):
+        seed = i + 2021
+        n_envs = 4
+        n_steps = 128
+        clip_norm = 0.2
+        entropy_coef = 0.01
+        mini_batches = 128
+        lr = 0.0003
+        max_steps = 1000000
+        target_reward = -70
+        problem = 'Acrobot-v1'
+        checkpoints = 'ppo-acrobot-v1-seed-{}.tf'.format(i)
+        history_checkpoint = 'ppo-acrobot-v1-seed-{}.parquet'.format(i)
+        path = "PPO/{}/approx-2nd-seed-{}-id-{}/".format(problem, seed, i)
+        isExist = os.path.exists(path)
+        if not isExist:
+            # Create a new directory because it does not exist
+            os.makedirs(path)
+        checkpoints = path + checkpoints
+        history_checkpoint = path + history_checkpoint
+    
+        envs = create_envs(problem, n_envs, False)
+        model_cfg = 'model/ann-actor-critic.cfg' # rlalgorithms_tf2.agents['ppo']['model']['ann'][0]
+        optimizer = Adam(learning_rate=lr)
+        model = ModelReader(
+            model_cfg,
+            seed=seed,
+            output_units=[envs[0].action_space.n, 1],
+            input_shape=envs[0].observation_space.shape,
+            optimizer=optimizer,
+        ).build_model()
+        agent = PPO(envs, model, seed=seed, n_steps=n_steps, entropy_coef=entropy_coef, mini_batches=mini_batches, clip_norm=clip_norm, checkpoints=[checkpoints], history_checkpoint=history_checkpoint, log_frequency=4)
+        agent.fit(target_reward=target_reward, max_steps=max_steps)
+
+    
+#### **4.2.2 PPO-VRER Non-command line**
+    ''' PPO-VRER '''
+    from tensorflow.keras.optimizers import Adam
+    import os
+    from vrer_policy_gradient import PPO, PPOVRER
+    from vrer_policy_gradient.utils.common import ModelReader, create_envs
+    from vrer_policy_gradient.utils.buffers import ReplayBuffer1
+    import vrer_policy_gradient
+    
+    for i in range(5):
+        seed = i + 2021
+        n_envs = 4
+        n_steps = 128
+        clip_norm = 0.2
+        entropy_coef = 0.01
+        mini_batches = 128
+        lr = 0.0003
+        max_steps = 400000
+        buffer_size = 400
+        target_reward = 201
+        problem = 'CartPole-v0'
+        checkpoints = 'ppo-problem-{}-buffer_size-{}-seed-{}.tf'.format(problem, buffer_size, i)
+        history_checkpoint = 'ppo-problem-{}-buffer_size-{}-seed-{}.parquet'.format(problem, buffer_size, i)
+        path = "PPO/{}/approx-2nd-buffer_size-{}-seed-{}-id-{}/".format(problem, buffer_size, seed, i)
+        isExist = os.path.exists(path)
+        if not isExist:
+            # Create a new directory because it does not exist
+            os.makedirs(path)
+        checkpoints = path + checkpoints
+        history_checkpoint = path + history_checkpoint
+    
+        envs = create_envs(problem, n_envs, False)
+    
+        model_cfg = vrer_policy_gradient.agents['ppovrer']['model']['ann'][0]
+        optimizer = Adam(learning_rate=lr)
+        optimizer = SGD(learning_rate=lr)
+        model = ModelReader(
+            model_cfg,
+            seed=seed,
+            output_units=[envs[0].action_space.n, 1],
+            input_shape=envs[0].observation_space.shape,
+            optimizer=optimizer,
+        ).build_model()
+        agent = PPOVRER(envs, model, seed=seed, n_steps=n_steps, entropy_coef=entropy_coef, mini_batches=mini_batches, clip_norm=clip_norm, checkpoints=[checkpoints], history_checkpoint=history_checkpoint, log_frequency=4, buffer_size=buffer_size)
+        agent.fit(target_reward=target_reward, max_steps=max_steps)
+
+
+## **5. Contact**
+___
+Website: https://zhenghuazx.github.io/hua.zheng/
+Email: zhenghua1@northeastern.edu
+Project link: https://github.com/zhenghuazx/vrer_policy_gradient
+
+
+## **6. Cite Us**
+___
+The paper is under review. Please check the arXiv page: https://arxiv.org/abs/2110.08902.
