@@ -10,7 +10,8 @@ The research was conducted by Hua Zheng and supervised by Professor Wei Xie, Pro
 
 Acknowledge: This library is built on top of rlalgorithms-tf2 which no longer exists on Github. But I would like to acknowledge its author **unsignedrant**.
 
-### **1. Installation**
+<!-- INTRODUCTION -->
+## **1. Introduction**
 ___
 
 
@@ -59,6 +60,7 @@ selection of algorithms can be used directly or through command line.
 
 <!-- FEATURES -->
 ## **3. Features**
+___
 
 ### **3.1. Command line options**
 
@@ -203,6 +205,7 @@ is specified, the file is looked for and if found, further training history will
 to the same history `ckpt.parquet` and the agent metrics will be updated with the most
 recent ones contained in the history file.
 
+<!-- USAGE -->
 ## **4. Usage**
 ___
 All agents / commands are available through the command line.
