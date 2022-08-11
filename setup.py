@@ -3,7 +3,7 @@ from setuptools import find_packages, setup
 install_requires = open('requirements.txt').read().splitlines()
 
 setup(
-    name='PG-VRER-tf2',
+    name='vrer-pg',
     version='1.0.1',
     packages=find_packages(),
     url='',
