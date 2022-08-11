@@ -649,8 +649,11 @@ or
 
 ## **5. Contact**
 ___
+
 Website: https://zhenghuazx.github.io/hua.zheng/
+
 Email: zhenghua1@northeastern.edu
+
 Project link: https://github.com/zhenghuazx/vrer_policy_gradient
 
 
