@@ -78,10 +78,7 @@ many hyperparameter features and types. 3 types are currently used by rlalgorith
       rlalgorithms-tf2 tune <agent> --env <env> --interesting-param <min-val> <max-val>
 
 And in both examples if `--interesting-param` is not specified, it will have the default value, 
-or a fixed value, if only 1 value is specified. Also, some nice visualization options using 
-[optuna.visualization.matplotlib](https://optuna.readthedocs.io/en/latest/reference/visualization/matplotlib.html):
-
-![param-importances](/assets/param-importances.png)
+or a fixed value, if only 1 value is specified. 
 
 ### **3.3. Early stopping / reduce on plateau.**
 
@@ -174,3 +171,45 @@ Which should generate a keras model similar to this one with output units 6, and
   which are loaded automatically.
 * `common=1` marks a layer to be reused by the following layers, which means
 `dense-1` and `dense-2` are called on the output of `dense-0`.
+
+### **3.5. Training history checkpoints**
+
+Saving training history is available for further benchmarking / visualizing results.
+This is achieved by specifying `--history-checkpoint <history.parquet>` which will result
+in a `.parquet` that will be updated at each episode end. A sample data point will have these 
+columns:
+
+* `mean_reward` most recent mean of agent episode rewards.
+* `best_reward` most recent best of agent episode rewards.
+* `episode_reward` most recent episode reward.
+* `step` most recent agent step.
+* `time` training elapsed time.
+
+### **3.6. Reproducible results**
+
+All operation results are reproducible by passing `--seed <some-seed>` or `seed=some_seed` 
+to agent constructor.
+
+### **3.7. Gameplay output to .jpg frames**
+
+Gameplay visual output can be saved to `.jpg` frames by passing `--frame-dir <some-dir>` to `play` command.
+
+### **3.8. Resume training / history**
+
+Weights are saved to `.tf` by specifying `--checkpoints <ckpt1.tf> <ckpt2.tf>`. To resume training,
+`--weights <ckpt1.tf> <ckpt2.tf>` should load the weights saved earlier. If `--history-checkpoint <ckpt.parquet>`
+is specified, the file is looked for and if found, further training history will be saved
+to the same history `ckpt.parquet` and the agent metrics will be updated with the most
+recent ones contained in the history file.
+
+## **4. Usage**
+___
+All agents / commands are available through the command line.
+
+    rlalgorithms-tf2 <command> <agent> [options] [args]
+
+**Note:** Unless called from command line with `--weights` passed,
+all models passed to agents in code, should be loaded with weights 
+beforehand, if called for resuming training or playing.
+
+
