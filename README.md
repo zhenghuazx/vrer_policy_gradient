@@ -44,10 +44,11 @@ vrer-pg
 
 	Use vrer-pg <command> to see more info about a command
 	Use vrer-pg <command> <agent> to see more info about command + agent
+	
+
+
 
 <!-- DESCRIPTION -->
-
-
 ## **2. Description**
 ___
 **vrer-pg** is a tensorflow based AI library which facilitates experimentation with
@@ -212,6 +213,25 @@ All agents / commands are available through the command line.
 all models passed to agents in code, should be loaded with weights 
 beforehand, if called for resuming training or playing.
 
+**Command line**
+```sh
+vrer-pg train trpovrer
+```
+**Out**
+	
+	vrer-pg 1.0.1
+
+	Usage:
+		vrer-pg <command> <agent> [options] [args]
+
+	Available commands:
+		train      Train given an agent and environment
+		play       Play a game given a trained agent and environment
+		tune       Tune hyperparameters given an agent, hyperparameter specs, and environment
+
+	Use vrer-pg <command> to see more info about a command
+	Use vrer-pg <command> <agent> to see more info about command + agent
+	
 <!-- ALGORITHMS -->
 ## **5. Algorithms**
 ___
@@ -238,26 +258,6 @@ to agent constructor or alternatively using `--history-checkpoint <some-history.
   
 ### *6.1. TRPO-VRER*
 Run TRPO with VRER with command line
-**Command line**
-	
-	vrer-pg train trpovrer
-	
-**Out**
-	
-	vrer-pg 1.0.1
-
-	Usage:
-		vrer-pg <command> <agent> [options] [args]
-
-	Available commands:
-		train      Train given an agent and environment
-		play       Play a game given a trained agent and environment
-		tune       Tune hyperparameters given an agent, hyperparameter specs, and environment
-
-	Use vrer-pg <command> to see more info about a command
-	Use vrer-pg <command> <agent> to see more info about command + agent
-
-train trpovrer
 
 | flags                         | help                                                                         | default   | hp_type     |
 |:------------------------------|:-----------------------------------------------------------------------------|:----------|:------------|
