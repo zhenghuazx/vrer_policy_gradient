@@ -212,4 +212,94 @@ All agents / commands are available through the command line.
 all models passed to agents in code, should be loaded with weights 
 beforehand, if called for resuming training or playing.
 
+<!-- ALGORITHMS -->
+## **5. Algorithms**
+___
+**General notes**
 
+* All the default hyperparameters don't work for all environments.
+  Which means you either need to tune them according to the given environment,
+  or pass previously tuned ones, in order to get good results.
+* `--model <model.cfg>` or `--actor-model <actor.cfg>` and `--critic-model <critic.cfg>` are optional 
+  which means, if not specified, the default model(s) will be loaded, so you don't have to worry about it.
+* You can also use external models by passing them to agent constructor. If you do, you will have to ensure
+  your models outputs match what the implementation expects, or modify it accordingly.
+* For atari environments / the ones that return an image by default, use the `--preprocess` flag for image preprocessing.
+* For checkpoints to be saved, `--checkpoints <checkpoint1.tf> <checkpoint2.tf>` should
+be specified for the model(s) to be saved. The number of passed checkpoints should match the number
+  of models the agent accepts.
+* For loading weights either for resuming training or for playing a game `--weights <weights1.tf> <weights2.tf>`
+and same goes for the weights, they should match the number of agent models.
+* For using a random seed, a `seed=some_seed` should be passed to agent constructor and ModelReader constructor if
+specified from code. If from the command line, all you need is to pass `--seed <some-seed>`
+* To save training history, `history_checkpoint=some_history.parquet` should be specified
+to agent constructor or alternatively using `--history-checkpoint <some-history.parquet>`. 
+  If the history checkpoint exists, training metrics will automatically start from where it left.
+  
+### *6.1. TRPO-VRER*
+
+**Command line**
+	vrer-pg train trpovrer
+**Out**
+vrer-pg 1.0.1
+
+Usage:
+	vrer-pg <command> <agent> [options] [args]
+
+Available commands:
+	train      Train given an agent and environment
+	play       Play a game given a trained agent and environment
+	tune       Tune hyperparameters given an agent, hyperparameter specs, and environment
+
+Use vrer-pg <command> to see more info about a command
+Use vrer-pg <command> <agent> to see more info about command + agent
+
+train trpovrer
+
+| flags                         | help                                                                         | default   | hp_type     |
+|:------------------------------|:-----------------------------------------------------------------------------|:----------|:------------|
+| --actor-iterations            | Actor optimization iterations per train step                                 | 10        | int         |
+| --actor-model                 | Path to actor model .cfg file                                                | -         | -           |
+| --advantage-epsilon           | Value added to estimated advantage                                           | 1e-08     | log_uniform |
+| --beta1                       | Beta1 passed to a tensorflow.keras.optimizers.Optimizer                      | 0.9       | log_uniform |
+| --beta2                       | Beta2 passed to a tensorflow.keras.optimizers.Optimizer                      | 0.999     | log_uniform |
+| --cg-damping                  | Gradient conjugation damping parameter                                       | 0.001     | log_uniform |
+| --cg-iterations               | Gradient conjugation iterations per train step                               | 10        | -           |
+| --cg-residual-tolerance       | Gradient conjugation residual tolerance parameter                            | 1e-10     | log_uniform |
+| --checkpoints                 | Path(s) to new model(s) to which checkpoint(s) will be saved during training | -         | -           |
+| --clip-norm                   | Clipping value passed to tf.clip_by_value()                                  | 0.1       | log_uniform |
+| --critic-iterations           | Critic optimization iterations per train step                                | 3         | int         |
+| --critic-model                | Path to critic model .cfg file                                               | -         | -           |
+| --display-precision           | Number of decimals to be displayed                                           | 2         | -           |
+| --divergence-monitoring-steps | Steps after which, plateau and early stopping are active                     | -         | -           |
+| --early-stop-patience         | Minimum plateau reduces to stop training                                     | 3         | -           |
+| --entropy-coef                | Entropy coefficient for loss calculation                                     | 0         | log_uniform |
+| --env                         | gym environment id                                                           | -         | -           |
+| --fvp-n-steps                 | Value used to skip every n-frames used to calculate FVP                      | 5         | int         |
+| --gamma                       | Discount factor                                                              | 0.99      | log_uniform |
+| --grad-norm                   | Gradient clipping value passed to tf.clip_by_value()                         | 0.5       | log_uniform |
+| --history-checkpoint          | Path to .parquet file to save training history                               | -         | -           |
+| --lam                         | GAE-Lambda for advantage estimation                                          | 1.0       | log_uniform |
+| --log-frequency               | Log progress every n games                                                   | -         | -           |
+| --lr                          | Learning rate passed to a tensorflow.keras.optimizers.Optimizer              | 0.0007    | log_uniform |
+| --max-frame                   | If specified, max & skip will be applied during preprocessing                | -         | categorical |
+| --max-kl                      | Maximum KL divergence used for calculating Lagrange multiplier               | 0.001     | log_uniform |
+| --max-steps                   | Maximum number of environment steps, when reached, training is stopped       | -         | -           |
+| --mini-batches                | Number of mini-batches to use per update                                     | 4         | categorical |
+| --monitor-session             | Wandb session name                                                           | -         | -           |
+| --n-envs                      | Number of environments to create                                             | 1         | categorical |
+| --n-steps                     | Transition steps                                                             | 512       | categorical |
+| --opt-epsilon                 | Epsilon passed to a tensorflow.keras.optimizers.Optimizer                    | 1e-07     | log_uniform |
+| --plateau-reduce-factor       | Factor multiplied by current learning rate when there is a plateau           | 0.9       | -           |
+| --plateau-reduce-patience     | Minimum non-improvements to reduce lr                                        | 10        | -           |
+| --ppo-epochs                  | Gradient updates per training step                                           | 4         | categorical |
+| --preprocess                  | If specified, states will be treated as atari frames                         | -         | -           |
+|                               | and preprocessed accordingly                                                 |           |             |
+| --quiet                       | If specified, no messages by the agent will be displayed                     | -         | -           |
+|                               | to the console                                                               |           |             |
+| --reward-buffer-size          | Size of the total reward buffer, used for calculating                        | 100       | -           |
+|                               | mean reward value to be displayed.                                           |           |             |
+| --seed                        | Random seed                                                                  | -         | -           |
+| --target-reward               | Target reward when reached, training is stopped                              | -         | -           |
+| --value-loss-coef             | Value loss coefficient for value loss calculation                            | 0.5       | log_uniform |
+| --weights                     | Path(s) to model(s) weight(s) to be loaded by agent output_models            | -         | -           |
