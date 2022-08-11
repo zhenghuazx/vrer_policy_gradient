@@ -315,14 +315,8 @@ to agent constructor or alternatively using `--history-checkpoint <some-history.
 	vrer-pg train trpovrer --n-env 4 --target-reward 195 --env CartPole-v0
    	
 ```sh
-/Library/Frameworks/Python.framework/Versions/3.9/lib/python3.9/site-packages/gym/envs/registration.py:505: UserWarning: WARN: The environment CartPole-v0 is out of date. You should consider upgrading to version `v1` with the environment ID `CartPole-v1`.
-  logger.warn(
-2022-08-11 11:54:14.605022: I tensorflow/core/platform/cpu_feature_guard.cc:151] This TensorFlow binary is optimized with oneAPI Deep Neural Network Library (oneDNN) to use the following CPU instructions in performance-critical operations:  AVX2 FMA
-To enable them in other operations, rebuild TensorFlow with the appropriate compiler flags.
 number of reuse:  0
 time: 0:00:15.744019, steps: 2048, games: 101, speed: 130 steps/s, mean reward: 20.1, best reward: -inf
-/Library/Frameworks/Python.framework/Versions/3.9/lib/python3.9/site-packages/vrer_policy_gradient/ppovrer/agent.py:268: VisibleDeprecationWarning: Creating an ndarray from ragged nested sequences (which is a list-or-tuple of lists-or-tuples-or ndarrays with different lengths or shapes) is deprecated. If you meant to do this, you must specify 'dtype=object' when creating the ndarray.
-  theta_diff = np.subtract(np.array(self.model.get_weights()), self.model_history[i])
 number of reuse:  1
 Best reward updated: -inf -> 20.1
 time: 0:00:17.821029, steps: 4096, games: 183, speed: 986 steps/s, mean reward: 24.3, best reward: 20.1
