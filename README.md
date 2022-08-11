@@ -47,14 +47,16 @@ vrer-pg
 	Use vrer-pg <command> <agent> to see more info about command + agent
 	
 
-### **2. Reproduction**
+### **2. Improvement on State-of-the-art PO algorithms**
 ___
 
-<object data="assets/convergence-PPO.pdf" type="application/pdf" width="700px" height="700px">
-    <embed src="assets/convergence-PPO.pdf">
-    </embed>
-</object>
-We 
+The mean performance curves and 95% confidence intervals of PPO(-VRER), TRPO(-VRER) and VPG(-VRER).
+
+![convergence-PPO](assets/convergenec-PPO.png)
+![convergence-TRPO](assets/convergenec-TRPO.png)
+![convergence-VPG](assets/convergenec-VPG.png)
+
+### **2. Reproduction**
 
 <!-- DESCRIPTION -->
 ## **2. Description**
@@ -372,18 +374,47 @@ time: 0:00:44.179972, steps: 28672, games: 833, speed: 988 steps/s, mean reward:
 * *Number of models:* 1
 * *Action spaces:* discrete, continuous
 
-| flags               | help                                                 | default   | hp_type     |
-|:--------------------|:-----------------------------------------------------|:----------|:------------|
-| --advantage-epsilon | Value added to estimated advantage                   | 1e-08     | log_uniform |
-| --clip-norm         | Clipping value passed to tf.clip_by_value()          | 0.1       | log_uniform |
-| --entropy-coef      | Entropy coefficient for loss calculation             | 0.01      | log_uniform |
-| --grad-norm         | Gradient clipping value passed to tf.clip_by_value() | 0.5       | log_uniform |
-| --lam               | GAE-Lambda for advantage estimation                  | 0.95      | log_uniform |
-| --mini-batches      | Number of mini-batches to use per update             | 4         | categorical |
-| --model             | Path to model .cfg file                              | -         | -           |
-| --n-steps           | Transition steps                                     | 128       | categorical |
-| --ppo-epochs        | Gradient updates per training step                   | 4         | categorical |
-| --value-loss-coef   | Value loss coefficient for value loss calculation    | 0.5       | log_uniform |
+| flags                         | help                                                                               | default   | hp_type     |
+|:------------------------------|:-----------------------------------------------------------------------------------|:----------|:------------|
+| --advantage-epsilon           | Value added to estimated advantage                                                 | 1e-08     | log_uniform |
+| --beta1                       | Beta1 passed to a tensorflow.keras.optimizers.Optimizer                            | 0.9       | log_uniform |
+| --beta2                       | Beta2 passed to a tensorflow.keras.optimizers.Optimizer                            | 0.999     | log_uniform |
+| --buffer_size                 | Maximum capacity of replay buffer                                                  | 100       | categorical |
+| --checkpoints                 | Path(s) to new model(s) to which checkpoint(s) will be saved during training       | -         | -           |
+| --clip-norm                   | Clipping value passed to tf.clip_by_value()                                        | 0.1       | log_uniform |
+| --display-precision           | Number of decimals to be displayed                                                 | 2         | -           |
+| --divergence-monitoring-steps | Steps after which, plateau and early stopping are active                           | -         | -           |
+| --early-stop-patience         | Minimum plateau reduces to stop training                                           | 3         | -           |
+| --entropy-coef                | Entropy coefficient for loss calculation                                           | 0.01      | log_uniform |
+| --env                         | gym environment id                                                                 | -         | -           |
+| --gamma                       | Discount factor                                                                    | 0.99      | log_uniform |
+| --grad-norm                   | Gradient clipping value passed to tf.clip_by_value()                               | 0.5       | log_uniform |
+| --history-checkpoint          | Path to .parquet file to save training history                                     | -         | -           |
+| --lam                         | GAE-Lambda for advantage estimation                                                | 0.95      | log_uniform |
+| --log-frequency               | Log progress every n games                                                         | -         | -           |
+| --lr                          | Learning rate passed to a tensorflow.keras.optimizers.Optimizer                    | 0.0007    | log_uniform |
+| --max-frame                   | If specified, max & skip will be applied during preprocessing                      | -         | categorical |
+| --max-steps                   | Maximum number of environment steps, when reached, training is stopped             | -         | -           |
+| --mini-batches                | Number of mini-batches to use per update                                           | 4         | categorical |
+| --model                       | Path to model .cfg file                                                            | -         | -           |
+| --monitor-session             | Wandb session name                                                                 | -         | -           |
+| --n-envs                      | Number of environments to create                                                   | 1         | categorical |
+| --n-steps                     | Transition steps                                                                   | 128       | categorical |
+| --num_reuse_each_iter         | Number of randomly sampled transition from each behavioral policy in the reuse set | 3         | categorical |
+| --opt-epsilon                 | Epsilon passed to a tensorflow.keras.optimizers.Optimizer                          | 1e-07     | log_uniform |
+| --plateau-reduce-factor       | Factor multiplied by current learning rate when there is a plateau                 | 0.9       | -           |
+| --plateau-reduce-patience     | Minimum non-improvements to reduce lr                                              | 10        | -           |
+| --ppo-epochs                  | Gradient updates per training step                                                 | 4         | categorical |
+| --preprocess                  | If specified, states will be treated as atari frames                               | -         | -           |
+|                               | and preprocessed accordingly                                                       |           |             |
+| --quiet                       | If specified, no messages by the agent will be displayed                           | -         | -           |
+|                               | to the console                                                                     |           |             |
+| --reward-buffer-size          | Size of the total reward buffer, used for calculating                              | 100       | -           |
+|                               | mean reward value to be displayed.                                                 |           |             |
+| --seed                        | Random seed                                                                        | -         | -           |
+| --target-reward               | Target reward when reached, training is stopped                                    | -         | -           |
+| --value-loss-coef             | Value loss coefficient for value loss calculation                                  | 0.5       | log_uniform |
+| --weights                     | Path(s) to model(s) weight(s) to be loaded by agent output_models                  | -         | -           |
 
 **Command line**
 
