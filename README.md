@@ -306,3 +306,56 @@ train trpovrer
 | --target-reward               | Target reward when reached, training is stopped                              | -         | -           |
 | --value-loss-coef             | Value loss coefficient for value loss calculation                            | 0.5       | log_uniform |
 | --weights                     | Path(s) to model(s) weight(s) to be loaded by agent output_models            | -         | -           |
+
+
+** Example **
+	vrer-pg train trpovrer --n-env 4 --target-reward 195 --env CartPole-v0
+   	
+```sh
+/Library/Frameworks/Python.framework/Versions/3.9/lib/python3.9/site-packages/gym/envs/registration.py:505: UserWarning: WARN: The environment CartPole-v0 is out of date. You should consider upgrading to version `v1` with the environment ID `CartPole-v1`.
+  logger.warn(
+2022-08-11 11:54:14.605022: I tensorflow/core/platform/cpu_feature_guard.cc:151] This TensorFlow binary is optimized with oneAPI Deep Neural Network Library (oneDNN) to use the following CPU instructions in performance-critical operations:  AVX2 FMA
+To enable them in other operations, rebuild TensorFlow with the appropriate compiler flags.
+number of reuse:  0
+time: 0:00:15.744019, steps: 2048, games: 101, speed: 130 steps/s, mean reward: 20.1, best reward: -inf
+/Library/Frameworks/Python.framework/Versions/3.9/lib/python3.9/site-packages/vrer_policy_gradient/ppovrer/agent.py:268: VisibleDeprecationWarning: Creating an ndarray from ragged nested sequences (which is a list-or-tuple of lists-or-tuples-or ndarrays with different lengths or shapes) is deprecated. If you meant to do this, you must specify 'dtype=object' when creating the ndarray.
+  theta_diff = np.subtract(np.array(self.model.get_weights()), self.model_history[i])
+number of reuse:  1
+Best reward updated: -inf -> 20.1
+time: 0:00:17.821029, steps: 4096, games: 183, speed: 986 steps/s, mean reward: 24.3, best reward: 20.1
+number of reuse:  1
+Best reward updated: 20.1 -> 24.3
+time: 0:00:20.266888, steps: 6144, games: 266, speed: 837 steps/s, mean reward: 24.25, best reward: 24.3
+number of reuse:  3
+time: 0:00:22.747528, steps: 8192, games: 345, speed: 826 steps/s, mean reward: 25.9, best reward: 24.3
+number of reuse:  0
+Best reward updated: 24.3 -> 25.9
+time: 0:00:24.894729, steps: 10240, games: 410, speed: 954 steps/s, mean reward: 29.28, best reward: 25.9
+number of reuse:  5
+Best reward updated: 25.9 -> 29.28
+time: 0:00:26.956820, steps: 12288, games: 481, speed: 993 steps/s, mean reward: 30.03, best reward: 29.28
+number of reuse:  4
+Best reward updated: 29.28 -> 30.03
+time: 0:00:29.242799, steps: 14336, games: 548, speed: 896 steps/s, mean reward: 31.22, best reward: 30.03
+number of reuse:  0
+Best reward updated: 30.03 -> 31.22
+time: 0:00:31.301686, steps: 16384, games: 600, speed: 995 steps/s, mean reward: 34.61, best reward: 31.22
+number of reuse:  5
+Best reward updated: 31.22 -> 34.61
+time: 0:00:33.378286, steps: 18432, games: 648, speed: 986 steps/s, mean reward: 41.5, best reward: 34.61
+number of reuse:  0
+Best reward updated: 34.61 -> 41.5
+time: 0:00:35.461156, steps: 20480, games: 691, speed: 983 steps/s, mean reward: 45.26, best reward: 41.5
+number of reuse:  0
+Best reward updated: 41.5 -> 45.26
+time: 0:00:37.535053, steps: 22528, games: 729, speed: 988 steps/s, mean reward: 50.42, best reward: 45.26
+number of reuse:  11
+Best reward updated: 45.26 -> 50.42
+time: 0:00:39.798340, steps: 24576, games: 768, speed: 905 steps/s, mean reward: 50.69, best reward: 50.42
+number of reuse:  12
+Best reward updated: 50.42 -> 50.69
+time: 0:00:42.106897, steps: 26624, games: 801, speed: 887 steps/s, mean reward: 56.27, best reward: 50.69
+number of reuse:  13
+Best reward updated: 50.69 -> 56.27
+time: 0:00:44.179972, steps: 28672, games: 833, speed: 988 steps/s, mean reward: 59.49, best reward: 56.27
+```
