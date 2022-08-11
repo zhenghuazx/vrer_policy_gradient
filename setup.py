@@ -15,7 +15,7 @@ setup(
     python_requires='>=3.6',
     entry_points={
         'console_scripts': [
-            'rlalgorithms-tf2=rlalgorithms_tf2.cli:execute',
+            'vrer-pg=vrer_pg.cli:execute',
         ],
     },
 )
