@@ -47,7 +47,14 @@ vrer-pg
 	Use vrer-pg <command> <agent> to see more info about command + agent
 	
 
+### **2. Reproduction**
+___
 
+<object data="assets/convergence-PPO.pdf" type="application/pdf" width="700px" height="700px">
+    <embed src="assets/convergence-PPO.pdf">
+    </embed>
+</object>
+We 
 
 <!-- DESCRIPTION -->
 ## **2. Description**
