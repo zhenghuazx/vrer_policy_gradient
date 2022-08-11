@@ -9,7 +9,7 @@ ppovrer_args = {
         'default': 0.95,
         'hp_type': 'log_uniform',
     },
-    'ppovrer-epochs': {
+    'ppo-epochs': {
         'help': 'Gradient updates per training step',
         'type': int,
         'default': 4,
