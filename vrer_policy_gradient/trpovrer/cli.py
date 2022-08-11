@@ -1,7 +1,7 @@
-from vrer_policy_gradient import a2c, ppo
+from vrer_policy_gradient import a2c, ppovrer
 
 a2c_args = a2c.cli_args
-ppo_args = ppo.cli_args
+ppovrer_args = ppovrer.cli_args
 trpo_args = {
     'actor-model': {'help': 'Path to actor model .cfg file'},
     'critic-model': {'help': 'Path to critic model .cfg file'},
@@ -66,6 +66,6 @@ trpo_args = {
     },
 }
 cli_args = a2c_args.copy()
-cli_args.update(ppo_args)
+cli_args.update(ppovrer_args)
 cli_args.update(trpo_args)
 del cli_args['model']
