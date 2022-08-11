@@ -241,18 +241,18 @@ to agent constructor or alternatively using `--history-checkpoint <some-history.
 **Command line**
 	vrer-pg train trpovrer
 **Out**
-vrer-pg 1.0.1
+	vrer-pg 1.0.1
 
-Usage:
-	vrer-pg <command> <agent> [options] [args]
+	Usage:
+		vrer-pg <command> <agent> [options] [args]
 
-Available commands:
-	train      Train given an agent and environment
-	play       Play a game given a trained agent and environment
-	tune       Tune hyperparameters given an agent, hyperparameter specs, and environment
+	Available commands:
+		train      Train given an agent and environment
+		play       Play a game given a trained agent and environment
+		tune       Tune hyperparameters given an agent, hyperparameter specs, and environment
 
-Use vrer-pg <command> to see more info about a command
-Use vrer-pg <command> <agent> to see more info about command + agent
+	Use vrer-pg <command> to see more info about a command
+	Use vrer-pg <command> <agent> to see more info about command + agent
 
 train trpovrer
 
