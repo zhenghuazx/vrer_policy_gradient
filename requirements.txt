@@ -11,7 +11,7 @@ pytest==7.1.2
 tensorflow==2.8.0
 tensorflow-probability==0.16.0
 termcolor==1.1.0
-wandb==0.12.16
+wandb==0.12.17
 tensorflow_addons==0.16.1
 tabulate==0.8.9
 pyglet==1.5.24
