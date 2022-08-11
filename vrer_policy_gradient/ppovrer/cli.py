@@ -39,6 +39,18 @@ ppovrer_args = {
         'default': 128,
         'hp_type': 'categorical',
     },
+    'num_reuse_each_iter': {
+        'help': 'Number of randomly sampled transition from each behavioral policy in the reuse set',
+        'type': int,
+        'default': 3,
+        'hp_type': 'categorical',
+    },
+    'buffer_size': {
+        'help': 'Maximum capacity of replay buffer ',
+        'type': int,
+        'default': 100,
+        'hp_type': 'categorical',
+    },      
 }
 cli_args = a2c_args.copy()
 cli_args.update(ppovrer_args)
