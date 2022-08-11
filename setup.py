@@ -15,7 +15,7 @@ setup(
     python_requires='>=3.6',
     entry_points={
         'console_scripts': [
-            'vrer-pg=vrer_pg.cli:execute',
+            'vrer-pg=vrer_policy_gradient.cli:execute',
         ],
     },
 )
