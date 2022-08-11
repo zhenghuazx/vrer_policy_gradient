@@ -257,6 +257,7 @@ to agent constructor or alternatively using `--history-checkpoint <some-history.
   If the history checkpoint exists, training metrics will automatically start from where it left.
   
 ### *6.1. TRPO-VRER*
+* *Number of models:* 1
 * *Action spaces:* discrete, continuous
 
 | flags                         | help                                                                         | default   | hp_type     |
@@ -360,3 +361,49 @@ number of reuse:  13
 Best reward updated: 50.69 -> 56.27
 time: 0:00:44.179972, steps: 28672, games: 833, speed: 988 steps/s, mean reward: 59.49, best reward: 56.27
 ```
+
+### *6.5. PPOVRER and PPO*
+
+* *Number of models:* 1
+* *Action spaces:* discrete, continuous
+
+| flags               | help                                                 | default   | hp_type     |
+|:--------------------|:-----------------------------------------------------|:----------|:------------|
+| --advantage-epsilon | Value added to estimated advantage                   | 1e-08     | log_uniform |
+| --clip-norm         | Clipping value passed to tf.clip_by_value()          | 0.1       | log_uniform |
+| --entropy-coef      | Entropy coefficient for loss calculation             | 0.01      | log_uniform |
+| --grad-norm         | Gradient clipping value passed to tf.clip_by_value() | 0.5       | log_uniform |
+| --lam               | GAE-Lambda for advantage estimation                  | 0.95      | log_uniform |
+| --mini-batches      | Number of mini-batches to use per update             | 4         | categorical |
+| --model             | Path to model .cfg file                              | -         | -           |
+| --n-steps           | Transition steps                                     | 128       | categorical |
+| --ppo-epochs        | Gradient updates per training step                   | 4         | categorical |
+| --value-loss-coef   | Value loss coefficient for value loss calculation    | 0.5       | log_uniform |
+
+**Command line**
+
+    rlalgorithms-tf2 train ppo --env PongNoFrameskip-v4 --target-reward 19 --n-envs 16 --preprocess --checkpoints ppo-pong.tf
+
+or
+
+    rlalgorithms-tf2 train ppo --env BipedalWalker-v3 --target-reward 200 --n-envs 16 --checkpoints ppo-bipedal-walker.tf
+
+**Non-command line**
+
+    from tensorflow.keras.optimizers import Adam
+    
+    import vrer_p
+    from vrer_policy_gradient import PPO
+    from vrer_policy_gradient.utils.common import ModelReader, create_envs
+    
+    envs = create_envs('PongNoFrameskip-v4', 16)
+    model_cfg = vrer_policy_gradient.agents['ppo']['model']['cnn'][0]
+    optimizer = Adam(learning_rate=7e-4)
+    model = ModelReader(
+        model_cfg,
+        output_units=[envs[0].action_space.n, 1],
+        input_shape=envs[0].observation_space.shape,
+        optimizer=optimizer,
+    ).build_model()
+    agent = PPO(envs, model, checkpoints=['ppo-pong.tf'])
+    agent.fit(target_reward=19)
