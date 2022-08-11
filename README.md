@@ -4,11 +4,11 @@ VRER: A Sample-Efficient Variance Reduction based Experience Replay Method for P
 [![zheng](https://img.shields.io/badge/Author-Zheng.H-yellow)](https://zhenghuazx.github.io/hua.zheng/)
 
 
-**vrer_policy_gradient** is a library of variance reduction based experience replay method proposed in the paper "Zheng, H., et al., 2022. Variance Reduction based Experience Replay for Reinforcement Learning Policy Optimization."
+**vrer-pg**, short for variance reduction based policy gradient, is a library of variance reduction based experience replay method proposed in the paper "Zheng, H., et al., 2022. Variance Reduction based Experience Replay for Reinforcement Learning Policy Optimization."
 
 The research was conducted by Hua Zheng and supervised by Professor Wei Xie, Professor Ben Feng. We would appreciate a citation if you use the code or results! 
 
-Acknowledge: This library is built on top of rlalgorithms-tf2 which no longer exists on Github. But I would like to acknowledge its author **unsignedrant**.
+**Acknowledge**: This library is built on top of rlalgorithms-tf2 which no longer exists on Github. But I would like to acknowledge its author **unsignedrant**.
 
 <!-- INTRODUCTION -->
 ## **1. Introduction**
