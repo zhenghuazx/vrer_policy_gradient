@@ -20,5 +20,5 @@ ___
 
 ![installation](/assets/installation.gif)
     
-    pip install git+https://github.com/unsignedrant/rlalgorithms-tf2
+    pip install git+https://github.com/zhenghuazx/vrer_policy_gradient.git
 
