@@ -36,8 +36,8 @@ class PPOVRER(A2C):
             mini_batches: Number of mini batches to use per gradient update.
             advantage_epsilon: Epsilon value added to estimated advantage.
             clip_norm: Clipping value passed to tf.clip_by_value()
-            num_reuse_each_iter: number of randomly sampled transition from each policy in reuse set
-            buffer_size: maximum capacity of replay buffer 
+            num_reuse_each_iter: Number of randomly sampled transition from each policy in reuse set
+            buffer_size: Maximum capacity of replay buffer 
             **kwargs: kwargs Passed to super classes.
         """
         super(PPOVRER, self).__init__(envs, model, **kwargs)
