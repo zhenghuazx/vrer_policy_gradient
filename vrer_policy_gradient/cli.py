@@ -64,16 +64,16 @@ class Executor:
         Returns:
             None
         """
-        print(f'rlalgorithms-tf2 {vrer_policy_gradient.__version__}')
+        print(f'vrer-pg {vrer_policy_gradient.__version__}')
         print(f'\nUsage:')
-        print(f'\trlalgorithms-tf2 <command> <agent> [options] [args]')
+        print(f'\tvrer-pg <command> <agent> [options] [args]')
         print(f'\nAvailable commands:')
         for command, items in vrer_policy_gradient.commands.items():
             print(f'\t{command:<10} {items[2]}')
         print()
-        print('Use rlalgorithms-tf2 <command> to see more info about a command')
+        print('Use vrer-pg <command> to see more info about a command')
         print(
-            'Use rlalgorithms-tf2 <command> <agent> to see more info about command + agent'
+            'Use vrer-pg <command> <agent> to see more info about command + agent'
         )
         if sections:
             for title, cli_args in sections.items():
