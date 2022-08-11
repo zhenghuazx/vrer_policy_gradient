@@ -5,8 +5,7 @@ import warnings
 import pandas as pd
 import vrer_policy_gradient
 from vrer_policy_gradient.base import OffPolicy
-from vrer_policy_gradient.utils.cli import (agent_args, non_agent_args,
-                                        off_policy_args)
+from vrer_policy_gradient.utils.cli import (agent_args, non_agent_args, off_policy_args)
 from vrer_policy_gradient.utils.common import create_agent
 from vrer_policy_gradient.utils.tuning import run_tuning
 
@@ -177,11 +176,6 @@ class Executor:
         self.add_args(
             vrer_policy_gradient.commands[self.command][0], command_parser, tuning
         )
-        if (
-            issubclass(vrer_policy_gradient.agents[self.agent_id]['agent'], OffPolicy)
-            or self.agent_id == 'acer'
-        ):
-            self.add_args(off_policy_args, general_parser, tuning)
         self.add_args(non_agent_args, general_parser, tuning)
         non_agent_known, extra1 = general_parser.parse_known_args(argv)
         agent_known, extra2 = agent_parser.parse_known_args(argv)
