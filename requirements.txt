@@ -16,3 +16,4 @@ tensorflow_addons==0.16.1
 tabulate==0.8.9
 pyglet==1.5.24
 fastparquet==0.8.1
+pybullet==3.2.5
