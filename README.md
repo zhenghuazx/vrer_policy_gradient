@@ -103,6 +103,7 @@ ___
 All features are available through the command line. For more command line info,
 check [command line options](#5-command-line-options)
 
+![installation](/assets/vrer.gif)
 ### **2.2. Intuitive hyperparameter tuning from cli**
 
 Command line tuning interface based on [optuna](https://optuna.org), which provides 
