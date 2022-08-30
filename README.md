@@ -659,4 +659,4 @@ Project link: https://github.com/zhenghuazx/vrer_policy_gradient
 
 ## **6. Cite Us**
 ___
-The paper is under review. Please check the arXiv page: https://arxiv.org/abs/2110.08902.
+The paper is under review. Please check the arXiv page: https://arxiv.org/abs/2208.12341v1.
