@@ -247,7 +247,7 @@ recent ones contained in the history file.
 ___
 All agents / commands are available through the command line.
 
-    rlalgorithms-tf2 <command> <agent> [options] [args]
+    vrer-pg <command> <agent> [options] [args]
 
 **Note:** Unless called from command line with `--weights` passed,
 all models passed to agents in code, should be loaded with weights 
