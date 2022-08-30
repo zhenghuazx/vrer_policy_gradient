@@ -47,7 +47,6 @@ significance is implicitly biased toward out-of-date observations. To overcome t
 ___
 **vrer-pg** is a tensorflow based AI library which facilitates experimentation with
 existing reinforcement learning algorithms with variance reduction based policy optimization. 
-The current implementation is based on **rlalgorithms-tf2** library (which unforunately is discontiued in Github).
 It provides well tested components that can be easily modified or extended. The available
 selection of algorithms can be used directly or through command line.
 
@@ -107,15 +106,15 @@ check [command line options](#5-command-line-options)
 ### **2.2. Intuitive hyperparameter tuning from cli**
 
 Command line tuning interface based on [optuna](https://optuna.org), which provides 
-many hyperparameter features and types. 3 types are currently used by rlalgorithms-tf2:
+many hyperparameter features and types. 3 types are currently used by vrer-pg:
 
 * **Categorical**:
   
-      rlalgorithms-tf2 tune <agent> --env <env> --interesting-param <val1> <val2> <val3> # ...
+      vrer-pg tune <agent> --env <env> --interesting-param <val1> <val2> <val3> # ...
 
 * **Int / log uniform**:
 
-      rlalgorithms-tf2 tune <agent> --env <env> --interesting-param <min-val> <max-val>
+      vrer-pg tune <agent> --env <env> --interesting-param <min-val> <max-val>
 
 And in both examples if `--interesting-param` is not specified, it will have the default value, 
 or a fixed value, if only 1 value is specified. 
@@ -552,11 +551,11 @@ time: 0:00:44.179972, steps: 28672, games: 833, speed: 988 steps/s, mean reward:
 
 **Command line**
 
-    rlalgorithms-tf2 train ppo --env PongNoFrameskip-v4 --target-reward 19 --n-envs 16 --preprocess --checkpoints ppo-pong.tf
+    vrer-pg train ppo --env PongNoFrameskip-v4 --target-reward 19 --n-envs 16 --preprocess --checkpoints ppo-pong.tf
 
 or
 
-    rlalgorithms-tf2 train ppo --env BipedalWalker-v3 --target-reward 200 --n-envs 16 --checkpoints ppo-bipedal-walker.tf
+    vrer-pg train ppovrer --env BipedalWalker-v3 --target-reward 200 --n-envs 16 --checkpoints ppo-bipedal-walker.tf
 
 #### **4.2.1 PPO Non-command line**
     
