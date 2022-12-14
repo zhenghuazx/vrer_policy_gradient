@@ -397,7 +397,7 @@ time: 0:00:44.179972, steps: 28672, games: 833, speed: 988 steps/s, mean reward:
 ```
 
 #### **4.1.1 TRPO Non-command line**
-
+```python
     ''' TRPO '''
     from tensorflow.keras.optimizers import Adam
     import os
@@ -445,7 +445,7 @@ time: 0:00:44.179972, steps: 28672, games: 833, speed: 988 steps/s, mean reward:
         agent = TRPO(envs, actor_model, critic_model, seed=seed, n_steps=n_steps, entropy_coef=entropy_coef, mini_batches=mini_batches,
                      clip_norm=clip_norm, checkpoints=checkpoints, history_checkpoint=history_checkpoint, log_frequency=4)
         agent.fit(target_reward=target_reward, max_steps=max_steps)
-
+```
 
 #### **4.1.2 TRPO-VRER Non-command line**
     
