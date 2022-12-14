@@ -567,7 +567,6 @@ or
 #### **4.2.2 PPO-VRER Non-command line**
 ```python
 ''' PPO '''
-''' PPO '''
 from tensorflow.keras.optimizers import Adam
 import os
 from vrer_policy_gradient import PPO
