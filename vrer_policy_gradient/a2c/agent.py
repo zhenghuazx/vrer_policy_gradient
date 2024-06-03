@@ -46,6 +46,8 @@ class A2C(OnPolicy):
             if isinstance(self.envs[0].action_space, Discrete)
             else MultivariateNormalDiag
         )
+        if self.save_grad_variance:
+            self.m_squared_sum, self.v_sum, self.relative_var = tf.Variable(0.0), tf.Variable(0.0), tf.Variable(0.0)
 
     def get_distribution(self, actor_output):
         """
@@ -93,6 +95,22 @@ class A2C(OnPolicy):
             actor_output,
         )
 
+    def compute_relative_variance(self):
+        m_squared_sum, v_sum = 0, 0
+        # Loop through all trainable variables in the model
+        iterations = int(self.model.optimizer.iterations.numpy())
+        config = self.model.optimizer.get_config()
+        beta_1_power = tf.pow(config['beta_1'], iterations + 1)
+        beta_2_power = tf.pow(config['beta_2'], iterations + 1)
+        for var in self.model.trainable_variables:
+            # Get the first and second moments
+            m = self.model.optimizer.get_slot(var, "m") / (1-beta_1_power)
+            v = self.model.optimizer.get_slot(var, "v") / (1-beta_1_power)
+
+            m_squared_sum += tf.reduce_sum(tf.square(m))
+            v_sum += tf.reduce_sum(v)
+        return m_squared_sum, v_sum, (v_sum - m_squared_sum) / m_squared_sum
+
     def get_batch(self):
         """
         Get n-step batch which is the result of running self.envs step() for
@@ -136,6 +154,12 @@ class A2C(OnPolicy):
             )
             rewards.append(step_rewards)
         dones.append(step_dones)
+
+        if self.save_grad_variance or hasattr(self, 'm_squared_sum') or self.id[-4:].lower() == 'vrer':
+            m_squared_sum, v_sum, relative_var = self.compute_relative_variance()
+            self.m_squared_sum.assign(m_squared_sum)
+            self.v_sum.assign(v_sum)
+            self.relative_var.assign(relative_var)
         return batch
 
     def calculate_returns(

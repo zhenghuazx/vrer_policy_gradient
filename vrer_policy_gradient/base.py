@@ -41,6 +41,8 @@ class BaseAgent(ABC):
         divergence_monitoring_steps=None,
         quiet=False,
         trial=None,
+        selection_constant=1.05,
+        save_grad_variance=False
     ):
         """
         Initialize base settings.
@@ -71,6 +73,7 @@ class BaseAgent(ABC):
                 and early stopping start monitoring.
             quiet: If True, all agent messages will be silenced.
             trial: optuna.trial.Trial
+            c: Selection constant for VRER
         """
         assert envs, 'No environments given'
         self.n_envs = len(envs)
@@ -112,6 +115,8 @@ class BaseAgent(ABC):
         self.episode_rewards = np.zeros(self.n_envs)
         self.done_envs = 0
         self.supported_action_spaces = Box, Discrete
+        self.c = selection_constant
+        self.save_grad_variance = save_grad_variance
         if seed:
             self.set_seeds(seed)
         self.reset_envs()
@@ -385,6 +390,14 @@ class BaseAgent(ABC):
             'step': [self.steps],
             'time': [perf_counter() - self.training_start_time],
         }
+        # if hasattr(self, 'reuse_set_size') and hasattr(self, 'buffers'):
+        if self.id[-4:] == 'vrer':
+            data['reuse_set_size'] = [self.reuse_set_size.numpy()]
+            data['reuse_ratio'] = [self.reuse_set_size.numpy() / len(self.buffers)]
+        if self.save_grad_variance:
+            data['m_squared_sum'] = [self.m_squared_sum.numpy()]
+            data['v_sum'] = [self.v_sum.numpy()]
+            data['relative_var'] = [self.relative_var.numpy()]
         write_from_dict(data, self.history_checkpoint)
 
     def step_envs(self, actions, get_observation=False, store_in_buffers=False):
@@ -444,7 +457,7 @@ class BaseAgent(ABC):
             'episode_reward',
         }
         assert (
-            set(previous_history.columns) == expected_columns
+            set(previous_history.columns) >= expected_columns
         ), f'Expected the following columns: {expected_columns}, got {set(previous_history.columns)}'
         last_row = previous_history.loc[previous_history['time'].idxmax()]
         self.mean_reward = last_row['mean_reward']
@@ -647,6 +660,65 @@ class BaseAgent(ABC):
                 self.display_message(f'Total reward: {total_reward}')
                 break
             steps += 1
+
+    def update_actor_moments_velocities(self, gradient, beta_1=0.9, beta_2=0.999):
+        r""" Compute bias-corrected first moment and second moment estimates
+
+        Compute adaptive estimation of first-order and second-order moments using the approach from Adam optimization
+
+        According to
+        [Kingma et al., 2014](http://arxiv.org/abs/1412.6980),
+        the method is "*computationally
+        efficient, has little memory requirement, invariant to diagonal rescaling of
+        gradients, and is well suited for problems that are large in terms of
+        data/parameters*".
+
+        Args:
+            learning_rate: A `tf.Tensor`, floating point value, a schedule that is a
+                `tf.keras.optimizers.schedules.LearningRateSchedule`, or a callable
+                that takes no arguments and returns the actual value to use. The
+                learning rate. Defaults to `0.001`.
+            beta_1: A float value or a constant float tensor, or a callable
+                that takes no arguments and returns the actual value to use. The
+                exponential decay rate for the 1st moment estimates.
+                Defaults to `0.9`.
+            beta_2: A float value or a constant float tensor, or a callable
+                that takes no arguments and returns the actual value to use. The
+                exponential decay rate for the 2nd moment estimates.
+                Defaults to `0.999`.
+
+        Returns:
+            m: A `tf.Tensor` storing the first-order moments
+            v: A `tf.Tensor` storing the second-order moments
+
+         Reference:
+        - [Kingma et al., 2014](http://arxiv.org/abs/1412.6980)
+        """
+        self.model.optimizer.iterations.assign_add(1)
+        config = self.model.optimizer.get_config()
+        beta_1 = config['beta_1']
+        beta_2 = config['beta_2']
+        start_idx = 0
+        for var in self.model.trainable_variables:
+            shape = var.shape
+            flat_size = tf.math.reduce_prod(shape)
+            grad_var = tf.reshape(
+                gradient[start_idx: start_idx + flat_size], shape
+            )
+            try:
+                # Try to get the slot
+                m, v = self.model.optimizer.get_slot(var, 'm'), self.model.optimizer.get_slot(var, 'v')
+            except KeyError:
+                # Slot not found, initialize all slots by applying dummy gradients
+                dummy_gradients = [tf.zeros_like(v) for v in self.model.trainable_variables]
+                self.model.optimizer.apply_gradients(zip(dummy_gradients, self.model.trainable_variables))
+                # Now try to get the slot again
+                m, v = self.model.optimizer.get_slot(var, 'm'), self.model.optimizer.get_slot(var, 'v')
+            # Your custom update logic here
+            new_m_value = beta_1 * m + (1 - beta_1) * grad_var  # Update biased first moment estimate
+            new_v_value = beta_2 * v + (1 - beta_2) * tf.square(grad_var)  # Update biased second raw moment estimate)
+            m.assign(new_m_value)
+            v.assign(new_v_value)
 
 
 class OnPolicy(BaseAgent, ABC):

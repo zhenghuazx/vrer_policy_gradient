@@ -41,6 +41,8 @@ class PPO(A2C):
         self.clip_norm = clip_norm
         self.batch_size = self.n_envs * self.n_steps
         self.mini_batch_size = self.batch_size // self.mini_batches
+        if self.save_grad_variance:
+            self.m_squared_sum, self.v_sum, self.relative_var = tf.Variable(0.0), tf.Variable(0.0), tf.Variable(0.0)
         assert (
             self.mini_batch_size > 0
         ), f'Invalid batch size to mini-batch size ratio {self.batch_size}: {self.mini_batches}'

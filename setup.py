@@ -4,7 +4,7 @@ install_requires = open('requirements.txt').read().splitlines()
 
 setup(
     name='vrer-pg',
-    version='1.0.1',
+    version='1.1.1',
     packages=find_packages(),
     url='',
     license='MIT',

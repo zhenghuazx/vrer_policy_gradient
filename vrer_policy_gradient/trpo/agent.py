@@ -57,6 +57,8 @@ class TRPO(PPO):
         self.critic_iterations = critic_iterations
         self.actor_iterations = actor_iterations
         self.fvp_n_steps = fvp_n_steps
+        if self.save_grad_variance:
+            self.m_squared_sum, self.v_sum, self.relative_var = tf.Variable(0.0), tf.Variable(0.0), tf.Variable(0.0)
 
     @staticmethod
     def flat_to_weights(flat, trainable_variables, in_place=False):
@@ -320,6 +322,8 @@ class TRPO(PPO):
             tape.gradient(surrogate_loss, self.actor.trainable_variables),
             self.actor.trainable_variables,
         )
+        if self.save_grad_variance:
+            self.update_actor_moments_velocities(flat_grads)
         step_direction = self.conjugate_gradients(
             flat_grads, states[:: self.fvp_n_steps]
         )

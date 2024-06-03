@@ -50,9 +50,11 @@ class PPOVRER(A2C):
         self.batch_size = self.n_envs * self.n_steps
         self.mini_batch_size = self.batch_size // self.mini_batches
         self.num_reuse_each_iter = num_reuse_each_iter
-        self.buffer_current_size = tf.Variable(0)
+        self.reuse_set_size = tf.Variable(0)
+        self.m_squared_sum, self.v_sum, self.relative_var = tf.Variable(0.0), tf.Variable(0.0), tf.Variable(0.0)
         self.model_history = deque(maxlen=buffer_size)
         self.buffers = deque(maxlen=buffer_size)
+        self.old_actor = tf.keras.models.clone_model(self.model)
         assert (
             self.mini_batch_size > 0
         ), f'Invalid batch size to mini-batch size ratio {self.batch_size}: {self.mini_batches}'
@@ -171,6 +173,41 @@ class PPOVRER(A2C):
 
         return score
 
+
+    def calculate_kl_div(self, states, actions, old_weights, new_distribution):
+        """
+        Calculate probability distribution of both new and old actor models
+        and calculate Kullback–Leibler divergence.
+        Args:
+            states: States tensor expected by the actor models.
+            old_weights: Trainable weights of an old policy
+
+        Returns:
+            Mean KL divergence, old distribution and new distribution.
+        """
+        self.old_actor.set_weights(old_weights)
+        old_actor_output = self.get_model_outputs(
+            states, [self.old_actor], actions,
+        )[4]
+        old_distribution = self.get_distribution(old_actor_output)
+        return (
+            tf.reduce_mean(old_distribution.kl_divergence(new_distribution)),
+            old_distribution,
+        )
+
+    def get_likelihood_ratio(self, states, actions, old_weights, new_distribution, new_log_probs):
+        # calculate likelihood ratio and KL divergence
+        (
+            kl_divergence,
+            old_distribution,
+        ) = self.calculate_kl_div(states, actions, old_weights, new_distribution)
+
+        ratios = tf.exp(
+            new_log_probs - old_distribution.log_prob(actions)
+        )
+        ratio = tf.reduce_mean(ratios)
+        return ratio, kl_divergence
+        
     def get_mini_batches(self, *args):
         """
         Split each item in args into mini-batches of size self.mini_batch_size.
@@ -224,7 +261,7 @@ class PPOVRER(A2C):
                 old_log_probs_mb,
                 advantages_mb,
             )
-
+        
     def get_batch(self):
         """
         Get n-step batch which is the result of running self.envs step() for
@@ -248,11 +285,15 @@ class PPOVRER(A2C):
         batch = [states, actions, returns, values, log_probs]
         states_flatten, actions_flatten = self.concat_step_batches(states, actions)
 
-        score = self.compute_score(states_flatten, actions_flatten)
-        layers_related_policy = set([i for i, s in enumerate(score) if s is not None])
-        score_numpy = [s.numpy().flatten() for i, s in enumerate(score) if i in layers_related_policy]
-        # print(score)
-        score_numpy = np.concatenate(score_numpy)
+        # score = self.compute_score(states_flatten, actions_flatten)
+        # layers_related_policy = set([i for i, s in enumerate(score) if s is not None])
+        # score_numpy = [s.numpy().flatten() for i, s in enumerate(score) if i in layers_related_policy]
+        # # print(score)
+        # score_numpy = np.concatenate(score_numpy)
+        
+        new_actor_output = self.get_model_outputs(states_flatten, self.output_models)[4]
+        new_distribution = self.get_distribution(new_actor_output)
+        new_log_probs = new_distribution.log_prob(actions_flatten)
         new_batches = 0
 
         all_states = states.copy()
@@ -260,18 +301,15 @@ class PPOVRER(A2C):
         all_returns = returns.copy()
         all_values = values.copy()
         all_log_probs = log_probs.copy()
-        self.buffer_current_size.assign_add(1)
         num_reuse = 0
+        sel_constant = self.c * int(self.model.optimizer.iterations.numpy()) / (1 + int(self.model.optimizer.iterations.numpy())) 
         # if self.buffer_current_size >= self.buffers[0].initial_size:
         for i, buffer_batch in enumerate(self.buffers):
             old_states, old_actions, old_returns, old_values, old_log_probs = buffer_batch
-            theta_diff = np.subtract(np.array(self.model.get_weights()), self.model_history[i])
-            theta_diff_numpy = [s.flatten() for k, s in enumerate(theta_diff) if k in layers_related_policy]
-            theta_diff = np.concatenate(theta_diff_numpy)
-            a = np.inner(theta_diff, score_numpy)
-            variance_ratio = np.exp(a + a ** 2)
+            ratio, kl_divergence = self.get_likelihood_ratio(states_flatten, actions_flatten, self.model_history[i], new_distribution, new_log_probs)
+            var_ratio = ratio # * np.exp(abs(ratio - 1) * v_sum**2 / m_squared_sum**2)
             indices = random.choices(range(self.n_steps), k=self.num_reuse_each_iter)
-            if variance_ratio < 1.0001:
+            if var_ratio < 1 + (sel_constant - 1) * self.relative_var.numpy() / (self.relative_var.numpy() + 1):
                 all_states = np.concatenate([all_states, old_states[indices]])
                 all_actions = np.concatenate([all_actions, old_actions[indices]])
                 all_returns = np.concatenate([all_returns, old_returns[indices]])
@@ -282,7 +320,7 @@ class PPOVRER(A2C):
             self.mini_batch_size = (self.batch_size + new_batches) // self.mini_batches
         print('number of reuse: ', num_reuse)
         self.buffers.append(batch)
-        # self.store_batch(batch)
+        self.reuse_set_size.assign(num_reuse)
         self.model_history.append(self.model.get_weights())
 
         return self.concat_step_batches(all_states, all_actions, all_returns, all_values, all_log_probs)

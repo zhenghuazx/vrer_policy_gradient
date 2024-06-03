@@ -115,6 +115,15 @@ agent_args = {
         '\nto the console',
         'action': 'store_true',
     },
+    'selection-constant': {
+        'help': 'selection constant',
+        'default': 1.03,
+        'type': float,
+    },
+    'save_grad_variance': {
+        'help': 'If specified, gradient variance will be saved',
+        'action': 'store_true',
+    }
 }
 
 train_args = {

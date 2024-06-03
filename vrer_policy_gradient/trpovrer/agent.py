@@ -198,6 +198,29 @@ class TRPOVRER(PPOVRER):
             new_distribution,
         )
 
+    def calculate_kl_div(self, states, actions, old_weights, new_distribution):
+        """
+        Calculate probability distribution of both new and old actor models
+        and calculate Kullback–Leibler divergence.
+        Args:
+            states: States tensor expected by the actor models.
+            actions: Actions tensor
+            old_weights: Trainable weights of an old policy
+            new_distribution: distribution of new actor outputs
+
+        Returns:
+            Mean KL divergence, old distribution and new distribution.
+        """
+        self.old_actor.set_weights(old_weights)
+        old_actor_output = self.get_model_outputs(
+            states, [self.old_actor, self.critic],
+        )[4]
+        old_distribution = self.get_distribution(old_actor_output)
+        return (
+            tf.reduce_mean(old_distribution.kl_divergence(new_distribution)),
+            old_distribution,
+        )
+
     def calculate_losses(self, states, actions, advantages):
         """
         Calculate surrogate loss and KL divergence.
@@ -320,6 +343,7 @@ class TRPOVRER(PPOVRER):
             tape.gradient(surrogate_loss, self.actor.trainable_variables),
             self.actor.trainable_variables,
         )
+        self.update_actor_moments_velocities(flat_grads)
         step_direction = self.conjugate_gradients(
             flat_grads, states[:: self.fvp_n_steps]
         )
