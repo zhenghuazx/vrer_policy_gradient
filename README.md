@@ -83,9 +83,7 @@ ___
 The performance improvement of state-of-the-art PO algorithms after using VRER.
 Results are described by the mean performance curves and 95% confidence intervals of PPO(-VRER), TRPO(-VRER) and VPG(-VRER).
 
-![convergence-PPO](assets/convergenec-PPO.png)
-![convergence-TRPO](assets/convergenec-TRPO.png)
-![convergence-VPG](assets/convergenec-VPG.png)
+![convergence-VPG](assets/Performance.png)
 
 ### **1.4. Reproduction**
 
@@ -657,7 +655,7 @@ ___
 
 Website: https://zhenghuazx.github.io/hua.zheng/
 
-Email: zhenghua1@northeastern.edu
+Email: hua.zheng0908@gmail.com
 
 Project link: https://github.com/zhenghuazx/vrer_policy_gradient
 
